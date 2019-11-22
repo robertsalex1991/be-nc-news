@@ -10,7 +10,7 @@ exports.postComment = (req, res, next) => {
   const id = req.params.article_id;
   insertComment(newComment, id)
     .then(comment => {
-      res.status(201).send(comment);
+      res.status(201).send({ comment });
     })
     .catch(next);
 };
@@ -29,8 +29,8 @@ exports.updateCommentsById = (req, res, next) => {
   const comments = req.params.comment_id;
   const votes = req.body.inc_votes;
   patchCommentsById(comments, votes)
-    .then(comments => {
-      res.status(200).send(comments);
+    .then(comment => {
+      res.status(200).send({ comment });
     })
     .catch(next);
 };

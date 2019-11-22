@@ -71,7 +71,6 @@ const patchCommentsById = (comment_id, votes) => {
 };
 
 const deleteCommentsById = comment_id => {
-  console.log(typeof comment_id);
   return connection("comments")
     .where({ comment_id: comment_id })
     .del()

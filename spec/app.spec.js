@@ -625,7 +625,7 @@ describe("/api", () => {
         });
     });
   });
-  describe("/comments/:comment_id", () => {
+  describe.only("/comments/:comment_id", () => {
     it("DELETE returns status 204", () => {
       return request(app)
         .delete("/api/comments/8")
@@ -637,6 +637,14 @@ describe("/api", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).to.eql("this comment doesn't exist");
+        });
+    });
+    it("DELETE returns status 400 for invalid input", () => {
+      return request(app)
+        .delete("/api/comments/lalala")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).to.eql("invalid input syntax for integer");
         });
     });
   });
