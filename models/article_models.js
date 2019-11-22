@@ -1,7 +1,6 @@
 const connection = require("../db/connection");
 
 const fetchArticles = query => {
-  console.log(query);
   return connection
     .select("articles.*")
     .from("articles")
@@ -20,7 +19,6 @@ const fetchArticles = query => {
             msg: `articles by ${query.author} about ${query.topic} cannot be found`
           });
         }
-        console.log(arr2);
         return arr2;
       }
       if (query.author) {
@@ -64,7 +62,6 @@ const fetchArticlesById = article_id => {
 };
 
 const patchArticleById = (article_id, votes) => {
-  console.log(votes);
   return connection
     .increment("votes", votes)
     .from("articles")

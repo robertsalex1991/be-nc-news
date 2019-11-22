@@ -20,7 +20,6 @@ const insertComment = (newComment, id) => {
         .returning("*");
     })
     .then(comment => {
-      console.log(comment);
       return comment[0];
     });
 };
@@ -47,7 +46,6 @@ const fetchAllComments = (article_id, query) => {
 };
 
 const patchCommentsById = (comment_id, votes) => {
-  console.log(votes);
   return connection
     .increment("votes", votes)
     .from("comments")

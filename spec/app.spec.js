@@ -31,7 +31,6 @@ describe("/api", () => {
         .get("/api/floopydoop")
         .expect(404)
         .then(({ body }) => {
-          console.log(body.msg);
           expect(body).to.eql({
             msg: "Error status 404, this page not found"
           });
@@ -59,7 +58,7 @@ describe("/api", () => {
         .get("/api/users/icellusedkars")
         .expect(200)
         .then(({ body }) => {
-          expect(body).to.eql({
+          expect(body.user).to.eql({
             username: "icellusedkars",
             name: "sam",
             avatar_url:
@@ -84,7 +83,7 @@ describe("/api", () => {
         .get("/api/articles/8")
         .expect(200)
         .then(({ body }) => {
-          expect(body).to.eql({
+          expect(body.article).to.eql({
             article_id: 8,
             title: "Does Mitch predate civilisation?",
             body:
@@ -121,7 +120,7 @@ describe("/api", () => {
         .expect(200)
         .send({ inc_votes: 100 })
         .then(({ body }) => {
-          expect(body.votes).to.eql(100);
+          expect(body.article.votes).to.eql(100);
         });
     });
     it("PATCH returns status 400 for invalid input", () => {
@@ -147,7 +146,7 @@ describe("/api", () => {
         .expect(200)
         .send({ inc_votes: 100, body: "I love coding" })
         .then(({ body }) => {
-          expect(body).to.eql({
+          expect(body.article).to.eql({
             article_id: 8,
             title: "Does Mitch predate civilisation?",
             body:
@@ -176,9 +175,8 @@ describe("/api", () => {
         .expect(201)
         .send({ username: "icellusedkars", body: "hey" })
         .then(({ body }) => {
-          console.log(body);
-          expect(body.author).to.eql("icellusedkars");
-          expect(body.body).to.eql("hey");
+          expect(body.comment.author).to.eql("icellusedkars");
+          expect(body.comment.body).to.eql("hey");
         });
     });
 
@@ -364,7 +362,6 @@ describe("/api", () => {
         .get("/api/articles")
         .expect(200)
         .then(({ body: { articles } }) => {
-          console.log(articles);
           expect(articles[0]).to.eql({
             article_id: 1,
             title: "Living in the shadow of a great man",
@@ -472,7 +469,6 @@ describe("/api", () => {
         .get("/api/articles?sort_by=lalala")
         .expect(400)
         .then(({ body }) => {
-          console.log(body);
           expect(body.msg).to.eql("the query parameter does not exist");
         });
     });
@@ -503,7 +499,6 @@ describe("/api", () => {
         .get("/api/articles?author=blablabla")
         .expect(404)
         .then(({ body }) => {
-          console.log(body);
           expect(body.msg).to.eql("the author blablabla cannot be found");
         });
     });
@@ -512,7 +507,6 @@ describe("/api", () => {
         .get("/api/articles?topic=blablabla")
         .expect(404)
         .then(({ body }) => {
-          console.log(body);
           expect(body.msg).to.eql("the topic blablabla cannot be found");
         });
     });
@@ -564,7 +558,6 @@ describe("/api", () => {
         .get("/api/articles?topic=blablabla&author=icellusedkars")
         .expect(404)
         .then(({ body }) => {
-          console.log(body);
           expect(body.msg).to.eql(
             "articles by icellusedkars about blablabla cannot be found"
           );
@@ -578,7 +571,7 @@ describe("/api", () => {
         .expect(200)
         .send({ inc_votes: 100 })
         .then(({ body }) => {
-          expect(body.votes).to.eql(100);
+          expect(body.comment.votes).to.eql(100);
         });
     });
     it("PATCH returns status 400 for invalid input", () => {
@@ -604,8 +597,7 @@ describe("/api", () => {
         .expect(200)
         .send({ inc_votes: 100, body: "I love coding" })
         .then(({ body }) => {
-          console.log(body);
-          expect(body).to.eql({
+          expect(body.comment).to.eql({
             comment_id: 8,
             author: "icellusedkars",
             article_id: 1,
@@ -625,7 +617,7 @@ describe("/api", () => {
         });
     });
   });
-  describe.only("/comments/:comment_id", () => {
+  describe("/comments/:comment_id", () => {
     it("DELETE returns status 204", () => {
       return request(app)
         .delete("/api/comments/8")
