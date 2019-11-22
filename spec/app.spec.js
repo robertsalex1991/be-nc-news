@@ -218,7 +218,7 @@ describe("/api", () => {
         .get("/api/articles/1/comments")
         .expect(200)
         .then(({ body }) => {
-          expect(body[2]).to.eql({
+          expect(body.comments[2]).to.eql({
             comment_id: 4,
             author: "icellusedkars",
             votes: -100,
@@ -232,7 +232,7 @@ describe("/api", () => {
         .get("/api/articles/3/comments")
         .expect(200)
         .then(({ body }) => {
-          expect(body).to.eql([]);
+          expect(body.comments).to.eql([]);
         });
     });
     it("GET returns status 404 for page not found if article id is not there", () => {
@@ -240,7 +240,6 @@ describe("/api", () => {
         .get("/api/articles/30/comments")
         .expect(404)
         .then(response => {
-          console.log(response.body);
           expect(response.body.msg).to.eql(
             `no articles found for article id 30`
           );
@@ -259,8 +258,8 @@ describe("/api", () => {
         .get("/api/articles/9/comments?sort_by=votes&order=asc")
         .expect(200)
         .then(({ body }) => {
-          expect(body).to.be.sortedBy("votes", { descending: false });
-          expect(body).to.eql([
+          expect(body.comments).to.be.sortedBy("votes", { descending: false });
+          expect(body.comments).to.eql([
             {
               comment_id: 1,
               author: "butter_bridge",
@@ -284,8 +283,8 @@ describe("/api", () => {
         .get("/api/articles/9/comments?sort_by=votes")
         .expect(200)
         .then(({ body }) => {
-          expect(body).to.be.sortedBy("votes", { descending: true });
-          expect(body).to.eql([
+          expect(body.comments).to.be.sortedBy("votes", { descending: true });
+          expect(body.comments).to.eql([
             {
               comment_id: 17,
               author: "icellusedkars",
@@ -309,8 +308,10 @@ describe("/api", () => {
         .get("/api/articles/9/comments?order=asc")
         .expect(200)
         .then(({ body }) => {
-          expect(body).to.be.sortedBy("created_at", { descending: false });
-          expect(body).to.eql([
+          expect(body.comments).to.be.sortedBy("created_at", {
+            descending: false
+          });
+          expect(body.comments).to.eql([
             {
               comment_id: 17,
               author: "icellusedkars",
@@ -334,8 +335,10 @@ describe("/api", () => {
         .get("/api/articles/9/comments")
         .expect(200)
         .then(({ body }) => {
-          expect(body).to.be.sortedBy("created_at", { descending: true });
-          expect(body).to.eql([
+          expect(body.comments).to.be.sortedBy("created_at", {
+            descending: true
+          });
+          expect(body.comments).to.eql([
             {
               comment_id: 1,
               author: "butter_bridge",

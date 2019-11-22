@@ -20,7 +20,7 @@ exports.getAllComments = (req, res, next) => {
   query = req.query;
   fetchAllComments(article_id, query)
     .then(comments => {
-      res.status(200).send(comments);
+      res.status(200).send({ comments });
     })
     .catch(next);
 };
