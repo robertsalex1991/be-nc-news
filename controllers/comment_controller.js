@@ -38,8 +38,8 @@ exports.updateCommentsById = (req, res, next) => {
 exports.deleteComments = (req, res, next) => {
   const comment_id = req.params.comment_id;
   deleteCommentsById(comment_id)
-    .then(rowsDeleted => {
-      res.status(204).send(rowsDeleted);
+    .then(() => {
+      res.status(204).send();
     })
     .catch(next);
 };

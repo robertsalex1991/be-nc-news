@@ -81,7 +81,6 @@ const deleteCommentsById = comment_id => {
           msg: "this comment doesn't exist"
         });
       }
-      return rowsDeleted;
     });
 };
 

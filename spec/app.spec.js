@@ -623,15 +623,12 @@ describe("/api", () => {
     });
   });
   describe("/comments/:comment_id", () => {
-    it("DELETE returns status 400 for invalid input", () => {
+    it("DELETE returns status 204", () => {
       return request(app)
         .delete("/api/comments/8")
-        .expect(204)
-        .then(({ body }) => {
-          expect(body.rowsDeleted).to.eql(1);
-        });
+        .expect(204);
     });
-    it.only("DELETE returns status 400 for invalid input", () => {
+    it("DELETE returns status 400 for invalid input", () => {
       return request(app)
         .delete("/api/comments/8000")
         .expect(404)
