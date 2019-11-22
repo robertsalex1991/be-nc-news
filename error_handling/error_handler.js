@@ -18,6 +18,10 @@ exports.handlePSQLErrors = (err, req, res, next) => {
     "23503": {
       msg: "this page cannot be found",
       status: 404
+    },
+    "42703": {
+      msg: "the query parameter does not exist",
+      status: 400
     }
   };
   //   const message = err.message.split("-")[1].slice(1);

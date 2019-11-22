@@ -355,83 +355,289 @@ describe("/api", () => {
         });
     });
   });
-  describe.only("/articles", () => {
+  describe("/articles", () => {
     it("GET returns status 200 & articles object containing an array of the articles", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
         .then(({ body: { articles } }) => {
-          // console.log(articles);
+          console.log(articles);
           expect(articles[0]).to.eql({
-            article_id: 4,
-            title: "Student SUES Mitch!",
-            body:
-              "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
-            votes: 0,
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            body: "I find this existence challenging",
+            votes: 100,
             topic: "mitch",
-            author: "rogersop",
-            created_at: "2006-11-18T12:21:54.000Z",
-            comment_count: "0"
+            author: "butter_bridge",
+            created_at: "2018-11-15T12:21:54.000Z",
+            comment_count: "13"
           });
         });
     });
   });
-  it("GET returns status 200 & an array of all comments for the given article id sorted by the heading and order specified in the query", () => {
-    return request(app)
-      .get("/api/articles?sort_by=votes&order=asc")
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.articles).to.be.sortedBy("votes", { descending: false });
-        expect(body.articles[0]).to.eql({
-          article_id: 11,
-          author: "icellusedkars",
-          body:
-            "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
-          comment_count: "0",
-          created_at: "1978-11-25T12:21:54.000Z",
-          title: "Am I a cat?",
-          topic: "mitch",
-          votes: 0
+  describe("/articles?queries", () => {
+    it("GET returns status 200 & an array of all comments for the given article id sorted by the heading and order specified in the query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=votes&order=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.be.sortedBy("votes", { descending: false });
+          expect(body.articles[0]).to.eql({
+            article_id: 11,
+            author: "icellusedkars",
+            body:
+              "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
+            comment_count: "0",
+            created_at: "1978-11-25T12:21:54.000Z",
+            title: "Am I a cat?",
+            topic: "mitch",
+            votes: 0
+          });
+          expect(body.articles[body.articles.length - 1]).to.eql({
+            article_id: 1,
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            comment_count: "13",
+            created_at: "2018-11-15T12:21:54.000Z",
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            votes: 100
+          });
         });
-        expect(body.articles[body.articles.length - 1]).to.eql({
-          article_id: 1,
-          author: "butter_bridge",
-          body: "I find this existence challenging",
-          comment_count: "13",
-          created_at: "2018-11-15T12:21:54.000Z",
-          title: "Living in the shadow of a great man",
-          topic: "mitch",
-          votes: 100
+    });
+    it("GET returns status 200 & an array of all comments for the given article id sorted with only the column heading specified in the query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=votes")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.be.sortedBy("votes", { descending: true });
+          expect(body.articles[0]).to.eql({
+            article_id: 1,
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            comment_count: "13",
+            created_at: "2018-11-15T12:21:54.000Z",
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            votes: 100
+          });
+          expect(body.articles[body.articles.length - 1]).to.eql({
+            article_id: 11,
+            author: "icellusedkars",
+            body:
+              "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
+            comment_count: "0",
+            created_at: "1978-11-25T12:21:54.000Z",
+            title: "Am I a cat?",
+            topic: "mitch",
+            votes: 0
+          });
         });
-      });
+    });
+    it("GET returns status 200 & an array of all comments for the given article id with only the order specified in the query", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.be.sortedBy("created_at", {
+            descending: false
+          });
+          expect(body.articles[0]).to.eql({
+            article_id: 12,
+            title: "Moustache",
+            body: "Have you seen the size of that thing?",
+            votes: 0,
+            topic: "mitch",
+            author: "butter_bridge",
+            created_at: "1974-11-26T12:21:54.000Z",
+            comment_count: "0"
+          });
+          expect(body.articles[body.articles.length - 1]).to.eql({
+            article_id: 1,
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            comment_count: "13",
+            created_at: "2018-11-15T12:21:54.000Z",
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            votes: 100
+          });
+        });
+    });
+    it("GET returns status 400 & an error message if the sort by query table header does not exist in the database", () => {
+      return request(app)
+        .get("/api/articles?sort_by=lalala")
+        .expect(400)
+        .then(({ body }) => {
+          console.log(body);
+          expect(body.msg).to.eql("the query parameter does not exist");
+        });
+    });
+    it("GET returns status 200 & an array of all comments for the given author specified in the query", () => {
+      return request(app)
+        .get("/api/articles?author=icellusedkars")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.be.sortedBy("created_at", {
+            descending: true
+          });
+          expect(body.articles[body.articles.length - 1]).to.eql({
+            article_id: 11,
+            title: "Am I a cat?",
+            body:
+              "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
+            votes: 0,
+            topic: "mitch",
+            author: "icellusedkars",
+            created_at: "1978-11-25T12:21:54.000Z",
+            comment_count: "0"
+          });
+          expect(body.articles).to.have.lengthOf(6);
+        });
+    });
+    it("GET returns status 404 & an error message when searching for an author that doesn't exist in the database", () => {
+      return request(app)
+        .get("/api/articles?author=blablabla")
+        .expect(404)
+        .then(({ body }) => {
+          console.log(body);
+          expect(body.msg).to.eql("the author blablabla cannot be found");
+        });
+    });
+    it("GET returns status 404 & an error message when searching for a topic that doesn't exist in the database", () => {
+      return request(app)
+        .get("/api/articles?topic=blablabla")
+        .expect(404)
+        .then(({ body }) => {
+          console.log(body);
+          expect(body.msg).to.eql("the topic blablabla cannot be found");
+        });
+    });
+    it("GET returns status 200 & an array of all comments for the given topic specified in the query", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.be.sortedBy("created_at", {
+            descending: true
+          });
+          expect(body.articles[body.articles.length - 1]).to.eql({
+            article_id: 12,
+            title: "Moustache",
+            body: "Have you seen the size of that thing?",
+            votes: 0,
+            topic: "mitch",
+            author: "butter_bridge",
+            created_at: "1974-11-26T12:21:54.000Z",
+            comment_count: "0"
+          });
+          expect(body.articles).to.have.lengthOf(11);
+        });
+    });
+    it("GET returns status 200 & an array of all comments for the given topic and author specified in the query", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch&author=icellusedkars")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.be.sortedBy("created_at", {
+            descending: true
+          });
+          expect(body.articles[body.articles.length - 1]).to.eql({
+            article_id: 11,
+            title: "Am I a cat?",
+            body:
+              "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
+            votes: 0,
+            topic: "mitch",
+            author: "icellusedkars",
+            created_at: "1978-11-25T12:21:54.000Z",
+            comment_count: "0"
+          });
+          expect(body.articles).to.have.lengthOf(6);
+        });
+    });
+    it("GET returns status 404 & an error message when articles on a specified topic that a specified author hasn't written about are searched for", () => {
+      return request(app)
+        .get("/api/articles?topic=blablabla&author=icellusedkars")
+        .expect(404)
+        .then(({ body }) => {
+          console.log(body);
+          expect(body.msg).to.eql(
+            "articles by icellusedkars about blablabla cannot be found"
+          );
+        });
+    });
   });
-  it("GET returns status 200 & an array of all comments for the given article id sorted by the heading and order specified in the query", () => {
-    return request(app)
-      .get("/api/articles?sort_by=votes")
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.articles).to.be.sortedBy("votes", { descending: true });
-        expect(body.articles[0]).to.eql({
-          article_id: 1,
-          author: "butter_bridge",
-          body: "I find this existence challenging",
-          comment_count: "13",
-          created_at: "2018-11-15T12:21:54.000Z",
-          title: "Living in the shadow of a great man",
-          topic: "mitch",
-          votes: 100
+  describe("/comments/:comment_id", () => {
+    it("Patch returns status 200 & the object of the comment specified by the comment_id in the url", () => {
+      return request(app)
+        .patch("/api/comments/8")
+        .expect(200)
+        .send({ inc_votes: 100 })
+        .then(({ body }) => {
+          expect(body.votes).to.eql(100);
         });
-        expect(body.articles[body.articles.length - 1]).to.eql({
-          article_id: 11,
-          author: "icellusedkars",
-          body:
-            "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
-          comment_count: "0",
-          created_at: "1978-11-25T12:21:54.000Z",
-          title: "Am I a cat?",
-          topic: "mitch",
-          votes: 0
+    });
+    it("PATCH returns status 400 for invalid input", () => {
+      return request(app)
+        .patch("/api/comments/lalalala")
+        .expect(400)
+        .then(response => {
+          expect(response.body.msg).to.eql(`invalid input syntax for integer`);
         });
-      });
+    });
+    it("PATCH returns status 400 for invalid input", () => {
+      return request(app)
+        .patch("/api/comments/8")
+        .expect(400)
+        .send({ inc_votes: "lalala" })
+        .then(response => {
+          expect(response.body.msg).to.eql(`invalid input syntax for integer`);
+        });
+    });
+    it("Patch returns status 200 & the object of the user specified by the username in the url", () => {
+      return request(app)
+        .patch("/api/comments/8")
+        .expect(200)
+        .send({ inc_votes: 100, body: "I love coding" })
+        .then(({ body }) => {
+          console.log(body);
+          expect(body).to.eql({
+            comment_id: 8,
+            author: "icellusedkars",
+            article_id: 1,
+            votes: 100,
+            created_at: "2010-11-24T12:36:03.000Z",
+            body: "Delicious crackerbreads"
+          });
+        });
+    });
+    it("PATCH returns status 400 for invalid input", () => {
+      return request(app)
+        .patch("/api/comments/8")
+        .expect(400)
+        .send({})
+        .then(response => {
+          expect(response.body.msg).to.eql(`Bad Request: no information sent`);
+        });
+    });
+  });
+  describe("/comments/:comment_id", () => {
+    it("DELETE returns status 400 for invalid input", () => {
+      return request(app)
+        .delete("/api/comments/8")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body.rowsDeleted).to.eql(1);
+        });
+    });
+    it.only("DELETE returns status 400 for invalid input", () => {
+      return request(app)
+        .delete("/api/comments/8000")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).to.eql("this comment doesn't exist");
+        });
+    });
   });
 });

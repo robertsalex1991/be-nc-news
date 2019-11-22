@@ -1,5 +1,5 @@
 const articleRouter = require("express").Router();
-const { commentRouter } = require("./comment_router");
+const { artIdCommentRouter } = require("./comment_router");
 const {
   getArticles,
   getArticlesById,
@@ -12,6 +12,6 @@ articleRouter
   .get(getArticlesById)
   .patch(updateArticlesById);
 
-articleRouter.use("/:article_id/comments", commentRouter);
+articleRouter.use("/:article_id/comments", artIdCommentRouter);
 
 module.exports = { articleRouter };

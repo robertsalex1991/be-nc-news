@@ -46,4 +46,48 @@ const fetchAllComments = (article_id, query) => {
     });
 };
 
-module.exports = { insertComment, fetchAllComments };
+const patchCommentsById = (comment_id, votes) => {
+  console.log(votes);
+  return connection
+    .increment("votes", votes)
+    .from("comments")
+    .where({ comment_id: comment_id })
+    .returning("*")
+    .then(comment => {
+      if (comment.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `no comments found for comment id ${comment_id}`
+        });
+      }
+      if (votes === undefined) {
+        return Promise.reject({
+          status: 400,
+          msg: `Bad Request: no information sent`
+        });
+      }
+      return comment[0];
+    });
+};
+
+const deleteCommentsById = comment_id => {
+  return connection("comments")
+    .where({ comment_id: comment_id })
+    .del()
+    .then(rowsDeleted => {
+      if (rowsDeleted === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: "this comment doesn't exist"
+        });
+      }
+      return rowsDeleted;
+    });
+};
+
+module.exports = {
+  insertComment,
+  fetchAllComments,
+  patchCommentsById,
+  deleteCommentsById
+};

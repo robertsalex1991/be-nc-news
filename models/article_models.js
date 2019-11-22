@@ -1,6 +1,7 @@
 const connection = require("../db/connection");
 
 const fetchArticles = query => {
+  console.log(query);
   return connection
     .select("articles.*")
     .from("articles")
@@ -10,6 +11,38 @@ const fetchArticles = query => {
     .orderBy(query.sort_by || "created_at", query.order || "desc")
     .returning("*")
     .then(joined => {
+      if (query.author && query.topic) {
+        let arr = joined.filter(article => article.author === query.author);
+        let arr2 = arr.filter(article => article.topic === query.topic);
+        if (arr2.length === 0) {
+          return Promise.reject({
+            status: 404,
+            msg: `articles by ${query.author} about ${query.topic} cannot be found`
+          });
+        }
+        console.log(arr2);
+        return arr2;
+      }
+      if (query.author) {
+        let arr = joined.filter(article => article.author === query.author);
+        if (arr.length === 0) {
+          return Promise.reject({
+            status: 404,
+            msg: `the author ${query.author} cannot be found`
+          });
+        }
+        return arr;
+      }
+      if (query.topic) {
+        let arr = joined.filter(article => article.topic === query.topic);
+        if (arr.length === 0) {
+          return Promise.reject({
+            status: 404,
+            msg: `the topic ${query.topic} cannot be found`
+          });
+        }
+        return arr;
+      }
       return joined;
     });
 };
