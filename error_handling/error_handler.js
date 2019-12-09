@@ -34,3 +34,11 @@ exports.handlePSQLErrors = (err, req, res, next) => {
 exports.handleNotFound = (req, res, next) => {
   res.status(404).send({ msg: "Error status 404, this page not found" });
 };
+
+exports.handleServerError = (err, req, res, next) => {
+  res.status(500).send({ msg: "internal server error" });
+};
+
+exports.handleDisallowedMethod = (req, res, next) => {
+  res.status(405).json({ msg: "Method not allowed" });
+};

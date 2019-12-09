@@ -1,48 +1,37 @@
 const connection = require("../db/connection");
 
 const fetchArticles = query => {
-  return connection
-    .select("articles.*")
-    .from("articles")
-    .leftJoin("comments", "articles.article_id", "=", "comments.article_id")
-    .count("comment_id AS comment_count")
-    .groupBy("articles.article_id")
-    .orderBy(query.sort_by || "created_at", query.order || "desc")
-    .returning("*")
-    .then(joined => {
-      if (query.author && query.topic) {
-        let arr = joined.filter(article => article.author === query.author);
-        let arr2 = arr.filter(article => article.topic === query.topic);
-        if (arr2.length === 0) {
+  return (
+    connection
+      .select("articles.*")
+      .from("articles")
+      .leftJoin("comments", "articles.article_id", "=", "comments.article_id")
+      .count("comment_id AS comment_count")
+      .groupBy("articles.article_id")
+      .orderBy(query.sort_by || "created_at", query.order || "desc")
+      .modify(modFunc => {
+        if (query.author) {
+          modFunc.where("articles.author", query.author);
+        }
+        if (query.topic) {
+          modFunc.where("articles.topic", query.topic);
+        }
+      })
+      .returning("*")
+      //first remove all the js in the if block and think about how this would be done in sql
+      //  second make sure to use .modify and read the notes instead of all the if statements
+
+      .then(joined => {
+        if (joined.length === 0) {
           return Promise.reject({
             status: 404,
-            msg: `articles by ${query.author} about ${query.topic} cannot be found`
+            msg: `your search query cannot be found`
           });
         }
-        return arr2;
-      }
-      if (query.author) {
-        let arr = joined.filter(article => article.author === query.author);
-        if (arr.length === 0) {
-          return Promise.reject({
-            status: 404,
-            msg: `the author ${query.author} cannot be found`
-          });
-        }
-        return arr;
-      }
-      if (query.topic) {
-        let arr = joined.filter(article => article.topic === query.topic);
-        if (arr.length === 0) {
-          return Promise.reject({
-            status: 404,
-            msg: `the topic ${query.topic} cannot be found`
-          });
-        }
-        return arr;
-      }
-      return joined;
-    });
+
+        return joined;
+      })
+  );
 };
 
 const fetchArticlesById = article_id => {

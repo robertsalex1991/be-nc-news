@@ -25,24 +25,14 @@ const insertComment = (newComment, id) => {
 };
 
 const fetchAllComments = (article_id, query) => {
-  let arr = [];
-  return fetchArticlesById(article_id)
-    .then(() => {
-      return connection
-        .select("*")
-        .from("comments")
-        .orderBy(query.sort_by || "created_at", query.order || "desc");
-    })
-    .then(comments => {
-      for (let i = 0; i < comments.length; i++) {
-        if (comments[i].article_id === Number(article_id)) {
-          delete comments[i].article_id;
-          arr.push(comments[i]);
-        }
-      }
-
-      return arr;
-    });
+  return fetchArticlesById(article_id).then(() => {
+    return connection
+      .select("comment_id", "votes", "created_at", "author", "body")
+      .from("comments")
+      .where({ article_id: article_id })
+      .orderBy(query.sort_by || "created_at", query.order || "desc")
+      .returning("*");
+  });
 };
 
 const patchCommentsById = (comment_id, votes) => {

@@ -1,5 +1,7 @@
 process.env.NODE_ENV = "test";
 
+//check that the correct equal/ eql being used. check that all test descriptions line up to the actual test. check notes for specifics
+
 const chai = require("chai");
 const { expect } = chai;
 const chaiSorted = require("chai-sorted");
@@ -114,7 +116,7 @@ describe("/api", () => {
           expect(response.body.msg).to.eql(`invalid input syntax for integer`);
         });
     });
-    it("Patch returns status 200 & the object of the user specified by the username in the url", () => {
+    it("Patch returns status 200 & increases the number of votes on the object of the user specified by the username in the url", () => {
       return request(app)
         .patch("/api/articles/8")
         .expect(200)
@@ -140,7 +142,7 @@ describe("/api", () => {
           expect(response.body.msg).to.eql(`invalid input syntax for integer`);
         });
     });
-    it("Patch returns status 200 & the object of the user specified by the username in the url", () => {
+    it("Patch returns status 200 & increases the votes on the object of the user specified by the username in the url, but also ignores any information related to any other object keys", () => {
       return request(app)
         .patch("/api/articles/8")
         .expect(200)
@@ -169,7 +171,7 @@ describe("/api", () => {
     });
   });
   describe("/articles/:article_id/comments", () => {
-    it("POST returns status 200 & the object of the article specified by the article id in the url", () => {
+    it("POST returns status 201 & the object of the article specified by the article id in the url", () => {
       return request(app)
         .post("/api/articles/1/comments")
         .expect(201)
@@ -499,7 +501,7 @@ describe("/api", () => {
         .get("/api/articles?author=blablabla")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).to.eql("the author blablabla cannot be found");
+          expect(body.msg).to.eql("your search query cannot be found");
         });
     });
     it("GET returns status 404 & an error message when searching for a topic that doesn't exist in the database", () => {
@@ -507,7 +509,7 @@ describe("/api", () => {
         .get("/api/articles?topic=blablabla")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).to.eql("the topic blablabla cannot be found");
+          expect(body.msg).to.eql("your search query cannot be found");
         });
     });
     it("GET returns status 200 & an array of all comments for the given topic specified in the query", () => {
@@ -558,9 +560,7 @@ describe("/api", () => {
         .get("/api/articles?topic=blablabla&author=icellusedkars")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).to.eql(
-            "articles by icellusedkars about blablabla cannot be found"
-          );
+          expect(body.msg).to.eql("your search query cannot be found");
         });
     });
   });
@@ -591,7 +591,7 @@ describe("/api", () => {
           expect(response.body.msg).to.eql(`invalid input syntax for integer`);
         });
     });
-    it("Patch returns status 200 & the object of the user specified by the username in the url", () => {
+    it("Patch returns status 200 & increases the votes of the object of the user specified by the username in the url, whilst ignoring any input related to any other object keys", () => {
       return request(app)
         .patch("/api/comments/8")
         .expect(200)

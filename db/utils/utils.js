@@ -1,20 +1,21 @@
 exports.formatDates = list => {
   if (list.length === 0) return [];
   return list.map(listObj => {
-    let cloneObj = { ...listObj };
-    let date = new Date(cloneObj.created_at).toUTCString();
+    const cloneObj = { ...listObj };
+    const date = new Date(cloneObj.created_at).toUTCString();
     cloneObj.created_at = date;
     return cloneObj;
   });
 };
 
 exports.makeRefObj = (data, ref1, ref2) => {
-  let obj = {};
-  for (let i = 0; i < data.length; i++) {
-    let key = data[i][ref1];
-    let value = data[i][ref2];
+  const obj = {};
+  data.forEach(dataObj => {
+    const key = dataObj[ref1];
+    const value = dataObj[ref2];
     obj[key] = value;
-  }
+  });
+
   return obj;
 };
 

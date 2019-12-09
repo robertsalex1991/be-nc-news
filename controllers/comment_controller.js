@@ -16,8 +16,8 @@ exports.postComment = (req, res, next) => {
 };
 
 exports.getAllComments = (req, res, next) => {
-  article_id = req.params.article_id;
-  query = req.query;
+  const article_id = req.params.article_id;
+  const query = req.query;
   fetchAllComments(article_id, query)
     .then(comments => {
       res.status(200).send({ comments });
@@ -39,7 +39,7 @@ exports.deleteComments = (req, res, next) => {
   const comment_id = req.params.comment_id;
   deleteCommentsById(comment_id)
     .then(() => {
-      res.status(204).send();
+      res.sendStatus(204);
     })
     .catch(next);
 };

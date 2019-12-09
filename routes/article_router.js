@@ -5,12 +5,18 @@ const {
   getArticlesById,
   updateArticlesById
 } = require("../controllers/article_controller");
+const { handleDisallowedMethod } = require("../error_handling/error_handler");
 
-articleRouter.route("/").get(getArticles);
+articleRouter
+  .route("/")
+  .get(getArticles)
+  .all(handleDisallowedMethod);
+
 articleRouter
   .route("/:article_id")
   .get(getArticlesById)
-  .patch(updateArticlesById);
+  .patch(updateArticlesById)
+  .all(handleDisallowedMethod);
 
 articleRouter.use("/:article_id/comments", artIdCommentRouter);
 
