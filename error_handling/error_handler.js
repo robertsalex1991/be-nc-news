@@ -1,4 +1,5 @@
 exports.handleCustomErrors = (err, req, res, next) => {
+  console.log(err);
   if (err.status) {
     res.status(err.status).send({ msg: err.msg });
   } else next(err);
@@ -21,6 +22,14 @@ exports.handlePSQLErrors = (err, req, res, next) => {
     "42703": {
       msg: "the query parameter does not exist",
       status: 400
+    },
+    "23505": {
+      msg: "this topic already exists",
+      status: 405
+    },
+    "22001": {
+      msg:
+        "one of the values you have submitted has exceeded the character limit"
     }
   };
   //   const message = err.message.split("-")[1].slice(1);
