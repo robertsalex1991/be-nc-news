@@ -2,59 +2,72 @@ const connection = require("../db/connection");
 
 const fetchArticles = query => {
   const { sort_by, order, author, topic, limit = 10, p = 1 } = query;
-  return (
-    connection
-      .select("articles.*")
-      .from("articles")
-      .leftJoin("comments", "articles.article_id", "=", "comments.article_id")
-      .count("comment_id AS comment_count")
-      .groupBy("articles.article_id")
-      .orderBy(sort_by || "created_at", order || "desc")
-      .modify(modFunc => {
-        if (author) {
-          modFunc.where("articles.author", author);
-        }
-        if (topic) {
-          modFunc.where("articles.topic", topic);
-        }
-      })
-      .limit(limit)
-      .offset((p - 1) * limit)
-      .returning("*")
-      //first remove all the js in the if block and think about how this would be done in sql
-      //  second make sure to use .modify and read the notes instead of all the if statements
+  return connection
+    .select("articles.*")
+    .from("articles")
+    .leftJoin("comments", "articles.article_id", "=", "comments.article_id")
+    .count("comment_id AS comment_count")
+    .groupBy("articles.article_id")
+    .orderBy(sort_by || "created_at", order || "desc")
+    .modify(modFunc => {
+      if (author) {
+        modFunc.where("articles.author", author);
+      }
+      if (topic) {
+        modFunc.where("articles.topic", topic);
+      }
+    })
+    .limit(limit)
+    .offset((p - 1) * limit)
+    .returning("*")
 
-      .then(joined => {
-        if (joined.length === 0) {
-          return Promise.reject({
-            status: 404,
-            msg: `your search query cannot be found`
-          });
-        }
+    .then(joined => {
+      if (joined.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `your search query cannot be found`
+        });
+      }
 
-        return joined;
-      })
-  );
+      return joined;
+    });
+};
+
+const getArticlesCount = query => {
+  const { author, topic } = query;
+  return connection
+    .select("*")
+    .from("articles")
+    .modify(modFunc => {
+      if (author) {
+        modFunc.where("articles.author", author);
+      }
+      if (topic) {
+        modFunc.where("articles.topic", topic);
+      }
+    })
+    .then(articles => {
+      return articles.length;
+    });
 };
 
 const fetchArticlesById = article_id => {
-  return (
-    connection
-      .select("articles.*")
-      .from("articles")
-      // .leftJoin("comments", "articles.article_id", "=", "comments.article_id")
-      // .count("comment_id as comment_count")
-      .where({ article_id: article_id })
-      .then(article => {
-        if (article.length === 0) {
-          return Promise.reject({
-            status: 404,
-            msg: `no articles found for article id ${article_id}`
-          });
-        }
-        return article[0];
-      })
-  );
+  return connection
+    .select("articles.*")
+    .from("articles")
+    .where("articles.article_id", article_id)
+    .leftJoin("comments", "articles.article_id", "comments.article_id")
+    .count("comment_id AS comment_count")
+    .groupBy("articles.article_id")
+    .then(article => {
+      if (article.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `no articles found for article id ${article_id}`
+        });
+      }
+      return article[0];
+    });
 };
 
 const patchArticleById = (article_id, votes = 0) => {
@@ -107,5 +120,6 @@ module.exports = {
   fetchArticlesById,
   patchArticleById,
   deleteArticleById,
-  insertArticle
+  insertArticle,
+  getArticlesCount
 };

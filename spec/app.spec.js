@@ -163,12 +163,12 @@ describe("/api", () => {
     });
   });
   describe("/articles", () => {
-    it.only("GET returns status 200 & articles object containing an array of the articles", () => {
+    it("GET returns status 200 & articles object containing an array of the articles", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles[0]).to.eql({
+        .then(({ body }) => {
+          expect(body.articles[0]).to.eql({
             article_id: 1,
             title: "Living in the shadow of a great man",
             body: "I find this existence challenging",
@@ -402,7 +402,8 @@ describe("/api", () => {
             votes: 0,
             topic: "mitch",
             author: "icellusedkars",
-            created_at: "1990-11-22T12:21:54.000Z"
+            created_at: "1990-11-22T12:21:54.000Z",
+            comment_count: "0"
           });
         });
     });

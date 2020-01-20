@@ -3,14 +3,17 @@ const {
   fetchArticlesById,
   patchArticleById,
   deleteArticleById,
-  insertArticle
+  insertArticle,
+  getArticlesCount
 } = require("../models/article_models");
 
 exports.getArticles = (req, res, next) => {
   let query = req.query;
-  fetchArticles(query)
-    .then(articles => {
-      res.status(200).send({ articles });
+  Promise.all([fetchArticles(query), getArticlesCount(query)])
+    .then(articleData => {
+      res
+        .status(200)
+        .send({ articles: articleData[0], article_count: articleData[1] });
     })
     .catch(next);
 };

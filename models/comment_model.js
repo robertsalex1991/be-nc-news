@@ -12,6 +12,7 @@ const insertComment = (newComment, id) => {
   newComment.author = newComment.username;
   newComment.article_id = id;
   delete newComment.username;
+
   return fetchUsersByUsername(newComment.author)
     .then(() => {
       return connection
