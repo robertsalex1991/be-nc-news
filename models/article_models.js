@@ -1,14 +1,7 @@
 const connection = require("../db/connection");
 
 const fetchArticles = query => {
-  const {
-    sort_by = "created_at",
-    order = "desc",
-    author,
-    topic,
-    limit = 10,
-    p = 1
-  } = query;
+  const { sort_by, order, author, topic, limit = 10, p = 1 } = query;
   return (
     connection
       .select("articles.*")
@@ -16,7 +9,7 @@ const fetchArticles = query => {
       .leftJoin("comments", "articles.article_id", "=", "comments.article_id")
       .count("comment_id AS comment_count")
       .groupBy("articles.article_id")
-      .orderBy(sort_by, order)
+      .orderBy(sort_by || "created_at", order || "desc")
       .modify(modFunc => {
         if (author) {
           modFunc.where("articles.author", author);

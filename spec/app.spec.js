@@ -163,7 +163,7 @@ describe("/api", () => {
     });
   });
   describe("/articles", () => {
-    it("GET returns status 200 & articles object containing an array of the articles", () => {
+    it.only("GET returns status 200 & articles object containing an array of the articles", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
