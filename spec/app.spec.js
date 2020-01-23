@@ -787,4 +787,12 @@ describe("/api", () => {
         });
     });
   });
+  it("GET:200, returns JSON of all available endpoints in a JSON file", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).to.be.an("object");
+      });
+  });
 });

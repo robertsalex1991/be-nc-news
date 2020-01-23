@@ -13,6 +13,8 @@ const {
   handleServerError
 } = require("./error_handling/error_handler");
 
+
+
 app.use("/api", apiRouter);
 
 app.use(handleCustomErrors);

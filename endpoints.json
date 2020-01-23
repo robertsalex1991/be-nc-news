@@ -6,7 +6,18 @@
     "description": "serves an array of all topics",
     "queries": [],
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
+      "topics": [
+        { "slug": "mitch", "description": "The man, the Mitch, the legend" }
+      ]
+    }
+  },
+  "POST /api/topics": {
+    "description": "returns status 201 & the object of the topic sent in the request",
+    "request_body": "{ slug: UFC, description: hey }",
+    "exampleResponse": {
+      "topics": [
+        { "slug": "mitch", "description": "The man, the Mitch, the legend" }
+      ]
     }
   },
   "GET /api/articles": {
@@ -15,13 +26,32 @@
     "exampleResponse": {
       "articles": [
         {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
+          "article_id": "1",
+          "title": "Living in the shadow of a great man",
+          "body": "I find this existence challenging",
+          "votes": 100,
+          "topic": "mitch",
+          " author": "butter_bridge",
+          "created_at": "2018-11-15T12:21:54.000Z",
+          "comment_count": "13"
         }
       ]
+    }
+  },
+  "POST /api/articles": {
+    "description": "returns status 201 & the object of the article sent in the request",
+    "queries": ["author", "topic", "sort_by", "order"],
+    "exampleResponse": {
+      "article": {
+        "article_id": "1",
+        "title": "Living in the shadow of a great man",
+        "body": "I find this existence challenging",
+        "votes": 100,
+        "topic": "mitch",
+        " author": "butter_bridge",
+        "created_at": "2018-11-15T12:21:54.000Z",
+        "comment_count": "13"
+      }
     }
   },
   "GET /api/articles/:article_id": {
@@ -29,91 +59,107 @@
     "queries": [],
     "exampleResponse": {
       "article": {
-        "article_id": 33,
-        "title": "Seafood substitutions are increasing",
-        "body": "'SEAFOOD fraud is a serious global problem', begins a recent report from Oceana, an NGO. Reviewing over 200 studies in 55 countries, the report finds that one in five fish sold has been mislabelled. Although fish fraud is common early in the supply chain, most of it comes at the retail level. In 65% of cases, the motivation is economic—slippery restaurateurs frequently serve up cheaper fish than they advertise to cut costs. In America, Oceana has reported instances of tilapia being sold as the more expensive red snapper. Especially brazen fish criminals have invented new types of fish entirely. In Brazil, researchers were puzzled to find markets selling 'douradinha', ' non-existent species. Close inspection found that 60% of such fish were actually 'vulture' catfish, a relatively undesirable dish. Reports in America of catfish being substituted for more expensive fish date back to at least 2002; Oceana’s study suggests that the phenomenon is spreading.",
-        "votes": 0,
-        "topic": "cooking",
-        "author": "weegembump",
-        "created_at": "2018-05-30T15:59:13.000Z"
-        }
+        "author": "lurker",
+        "title": "cooking",
+        "article_id": 3,
+        "body": "Text from the article..",
+        "topic": "coding",
+        "created_at": 1527695953341,
+        "votes": 10,
+        "comment_count": "5"
       }
-    },
-
+    }
+  },
   "PATCH /api/articles/:article_id": {
     "description": "serves an  object of the article",
     "queries": [],
     "request_body": "{inc_votes: 10}",
     "exampleResponse": {
       "article": {
-        "article_id": 33,
-        "title": "Seafood substitutions are increasing",
-        "body": "'SEAFOOD fraud is a serious global problem', begins a recent report from Oceana, an NGO. Reviewing over 200 studies in 55 countries, the report finds that one in five fish sold has been mislabelled. Although fish fraud is common early in the supply chain, most of it comes at the retail level. In 65% of cases, the motivation is economic—slippery restaurateurs frequently serve up cheaper fish than they advertise to cut costs. In America, Oceana has reported instances of tilapia being sold as the more expensive red snapper. Especially brazen fish criminals have invented new types of fish entirely. In Brazil, researchers were puzzled to find markets selling 'douradinha', ' non-existent species. Close inspection found that 60% of such fish were actually 'vulture' catfish, a relatively undesirable dish. Reports in America of catfish being substituted for more expensive fish date back to at least 2002; Oceana’s study suggests that the phenomenon is spreading.",
-        "votes": 10,
-        "topic": "cooking",
-        "author": "weegembump",
-        "created_at": "2018-05-30T15:59:13.000Z"
-        }
+        "author": "lurker",
+        "title": "cooking",
+        "article_id": 3,
+        "body": "Text from the article..",
+        "topic": "coding",
+        "created_at": 1527695953341,
+        "votes": 20,
+        "comment_count": "5"
       }
-    },
-    
+    }
+  },
   "GET /api/articles/:article_id/comments": {
     "description": "serves an array of comment objects of the article",
     "queries": ["sort_by", "order"],
     "exampleResponse": {
       "comments": [
         {
-          "comment_id": 327,
-          "votes": 0,
-          "created_at": "2019-12-27T08:36:24.429Z",
-          "author": "tickle122",
-          "body": "Well this is concerning turn of events "
-          }
+          "comment_id": 2,
+          "votes": 10,
+          "created_at": 1527695953341,
+          "author": "lurker",
+          "body": "this is a good thing"
+        }
       ]
     }
   },
   "POST /api/articles/:article_id/comments": {
     "description": "serves an object of the posted comment",
     "queries": [],
-    "requestBody": "{username: tickle122 body: Wow}",
+    "requestBody": "{username: lurker, body: Good stuff}",
     "exampleResponse": {
-      {
-        "comment_id": 328,
+      "comment": {
+        "comment_id": 25,
         "votes": 0,
-        "created_at": "2019-12-27T08:36:24.429Z",
-        "author": "tickle122",
-        "body": "Wow"
-        }
-    },
-  
-    "PATCH /api/comments/:comment_id": {
+        "created_at": 1527695953341,
+        "author": "lurker",
+        "body": "Good stuff"
+      }
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
     "description": "serves an  object of the patched comment",
     "queries": [],
     "request_body": "{inc_votes: 10}",
     "exampleResponse": {
       "article": {
-        "comment_id": 327,
-        "votes": 10,
-        "created_at": "2019-12-27T08:36:24.429Z",
-        "author": "tickle122",
-        "body": "Well this is concerning turn of events "
-        }
+        "author": "lurker",
+        "comment_id": 3,
+        "article_id": 2,
+        "body": "this is a comment",
+        "created_at": 1527695953341,
+        "votes": 20
+      }
     }
   },
-
+  "GET /api/comments/:comment_id": {
+    "description": "serves an object of the comment",
+    "queries": [],
+    "requestBody": "{inc_votes: 10}",
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 25,
+        "votes": 10,
+        "created_at": 1527695953341,
+        "author": "lurker",
+        "body": "Good stuff"
+      }
+    }
+  },
   "DELETE /api/comments/:comment_id": {
     "description": "deletes the comment",
     "exampleResponse": "204 - no content"
   },
   "GET /api/users": {
-    "description": "serves an array of user objects",
+    "description": "serves an array of users",
+    "parametricInputExample": "lurker",
     "exampleResponse": {
       "users": [
         {
-        "username": "tickle122",
-        "avatar_url": "https://www.spiritsurfers.net/monastery/wp-content/uploads/_41500270_mrtickle.jpg",
-        "name": "Tom Tickle"
-        } ]
+          "username": "lurker",
+          "avatar_url": "http://www.GreatImage.com",
+          "name": "marie"
+        }
+      ]
     }
   }
 }
