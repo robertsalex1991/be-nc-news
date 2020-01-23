@@ -1,27 +1,33 @@
-Alex's News Project
+# Alex's NC News Project
+
 https://be-nc-news-ar.herokuapp.com/
 
 This project is the backend for a news api, allowing access to articles, comments, users and topics.
 
-Prerequisites
+### Prerequisites
+
 In order to run this project, the following prerequisites are required to be installed globally:
 
-Dependency Version
-PostgreSQL 12.1
-Node.JS 12.9.1
-NPM 6.10.3
+| Dependency | Version |
+| ---------- | ------- |
+| PostgreSQL | 12.1    |
+| Node.JS    | 12.9.1  |
+| NPM        | 6.10.3  |
+
 The following developer dependencies will need to be installed:
 
-Dependency Version
-Express 4.17.1
-Knex 0.20.2
-Node Postgres 7.12.1
-Chai 4.2.0
-Chai-Sorted 0.2.0
-Mocha 6.2.2
-Supertest 4.0.2
+| Dependency    | Version |
+| ------------- | ------- |
+| Express       | 4.17.1  |
+| Knex          | 0.20.2  |
+| Node Postgres | 7.12.1  |
+| Chai          | 4.2.0   |
+| Chai-Sorted   | 0.2.0   |
+| Mocha         | 6.2.2   |
+| Supertest     | 4.0.2   |
 
-Installing
+## Installing
+
 This section details the steps to get the development environment up and running.
 
 Step 1: Clone the repository with the command:
@@ -36,7 +42,7 @@ npm i
 
 Step 4: Create a local knexfile.js file in the main directory and insert the below code:
 
-const ENV = process.env.NODE_ENV || "development";
+```const ENV = process.env.NODE_ENV || "development";
 
 const baseConfig = {
 client: "pg",
@@ -69,20 +75,29 @@ database: "nc_news_test"
 };
 
 module.exports = { ...customConfig[ENV], ...baseConfig };
+```
 
 NB: postGreSQL will require a username and password if you are running a linux system. If you are running on Mac OSX, you can remove the username and password keys from both development and test.
 
 Step 5: Run the following terminal commands to set up your local test and development databases:
 
+```
 $ npm run setup-dbs
 $ npm run seed
+```
+
 To see your databases you can run the command:
 
+```
 \$ psql
 \c nc_news_test
+```
+
 or
 
+```
 \$ psql -f queries.sql > output.txt
+```
 
 The above command with create an .txt file, displaying the tables and the data inserted.
 
@@ -93,8 +108,11 @@ To test the endpoints locally and ensure that everything has been configured cor
 Endpoints
 The table below outlines the purpose of each test category, for additional details please review the app.spec.js file.
 
-Endpoint Request Tests
-/api GET Ensures that a JSON detailing the available endpoints and the requirements within each in served upon receiving a request.
+| Endpoint | Request | Tests                                                                                                                      |
+| -------- | ------- | -------------------------------------------------------------------------------------------------------------------------- |
+| /api     | GET     | Ensures that a JSON detailing the available endpoints and the requirements within each in served upon receiving a request. |
+
+|
 /api/topics GET Ensures that all topics are served. These are served as an array of each topic.
 /api/topics POST Ensures that a new topic may be posted. An error is returned if a description is not provided.
 /api/users GET Ensures that all users are served. These are served as an array of users.
